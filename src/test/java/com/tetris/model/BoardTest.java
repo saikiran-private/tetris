@@ -1,128 +1,156 @@
 package com.tetris.model;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class BoardTest {
-
+    
     @Test
     public void testBoardCreation() {
         Board board = new Board(10, 20);
+        
         assertEquals(10, board.getWidth());
         assertEquals(20, board.getHeight());
         assertEquals(0, board.getScore());
         assertFalse(board.isGameOver());
-        assertNotNull(board.getCurrentShape());
-        assertNotNull(board.getNextShape());
+        
+        // The grid should be initialized with zeros
+        int[][] grid = board.getGrid();
+        for (int row = 0; row < 20; row++) {
+            for (int col = 0; col < 10; col++) {
+                assertEquals(0, grid[row][col]);
+            }
+        }
     }
     
     @Test
     public void testMoveShapeDown() {
         Board board = new Board(10, 20);
+        
+        // Create a shape and set it on the board
+        Shape shape = Shape.createRandomShape();
+        board.setCurrentShape(shape);
+        
+        // Get the initial position of the shape
         Shape initialShape = board.getCurrentShape();
+        int initialY = initialShape.getBlocks()[0].getY();
         
-        // Get initial Y position of first block
-        int initialY = initialShape.getBlocks().get(0).getY();
+        // Move the shape down
+        board.moveShapeDown();
         
-        // Move shape down
-        boolean moved = board.moveShapeDown();
+        // Get the new position of the shape
+        Shape movedShape = board.getCurrentShape();
+        int newY = movedShape.getBlocks()[0].getY();
         
-        // Check if shape moved down
-        assertTrue(moved);
-        assertEquals(initialY + 1, board.getCurrentShape().getBlocks().get(0).getY());
+        // The Y coordinate should have increased by 1
+        assertEquals(initialY + 1, newY);
     }
     
     @Test
     public void testMoveShapeLeftAndRight() {
         Board board = new Board(10, 20);
+        
+        // Create a shape and set it on the board
+        Shape shape = Shape.createRandomShape();
+        // Position it in the middle to ensure it can move both left and right
+        shape.setPosition(5, 0);
+        board.setCurrentShape(shape);
+        
+        // Get the initial position of the shape
         Shape initialShape = board.getCurrentShape();
+        int initialX = initialShape.getBlocks()[0].getX();
         
-        // Get initial X position of first block
-        int initialX = initialShape.getBlocks().get(0).getX();
+        // Move the shape left
+        board.moveShapeLeft();
         
-        // Move shape left
-        boolean movedLeft = board.moveShapeLeft();
+        // Get the new position of the shape
+        Shape movedLeftShape = board.getCurrentShape();
+        int leftX = movedLeftShape.getBlocks()[0].getX();
         
-        // Check if shape moved left
-        assertTrue(movedLeft);
-        assertEquals(initialX - 1, board.getCurrentShape().getBlocks().get(0).getX());
+        // The X coordinate should have decreased by 1
+        assertEquals(initialX - 1, leftX);
         
-        // Move shape right twice (back to original + 1)
+        // Move the shape right twice (to get back to the right of the initial position)
         board.moveShapeRight();
-        boolean movedRight = board.moveShapeRight();
+        board.moveShapeRight();
         
-        // Check if shape moved right
-        assertTrue(movedRight);
-        assertEquals(initialX + 1, board.getCurrentShape().getBlocks().get(0).getX());
+        // Get the new position of the shape
+        Shape movedRightShape = board.getCurrentShape();
+        int rightX = movedRightShape.getBlocks()[0].getX();
+        
+        // The X coordinate should have increased by 1 from the initial position
+        assertEquals(initialX + 1, rightX);
     }
     
     @Test
     public void testRotateShape() {
         Board board = new Board(10, 20);
+        
+        // Create a shape (use a specific type that changes when rotated, like I)
+        Shape shape = new Shape(0); // I shape
+        // Position it in the middle to ensure it can rotate
+        shape.setPosition(5, 5);
+        board.setCurrentShape(shape);
+        
+        // Get the current shape
         Shape currentShape = board.getCurrentShape();
         
-        // Skip the test if we have an O shape (which doesn't change when rotated)
-        if (currentShape.getShapeType() == Shape.O_SHAPE) {
-            // Just assert something trivial to make the test pass
-            assertTrue(true);
-            return;
+        // Store the initial block positions
+        Block[] initialBlocks = new Block[currentShape.getBlocks().length];
+        for (int i = 0; i < currentShape.getBlocks().length; i++) {
+            Block block = currentShape.getBlocks()[i];
+            initialBlocks[i] = new Block(block.getX(), block.getY(), block.getColor());
         }
         
-        // Get initial state
-        int initialRotationState = currentShape.getRotationState();
+        // Rotate the shape
+        board.rotateShape();
         
-        // Make a copy of the blocks before rotation for comparison
-        Shape beforeRotation = currentShape.getCopy();
+        // Get the rotated shape
+        Shape rotatedShape = board.getCurrentShape();
+        Block[] rotatedBlocks = rotatedShape.getBlocks();
         
-        // Rotate shape
-        boolean rotated = board.rotateShape();
-        
-        // If rotation was successful, check that something changed
-        if (rotated) {
-            // Either the rotation state changed or the blocks positions changed
-            boolean changed = (initialRotationState != currentShape.getRotationState()) ||
-                              !areBlocksInSamePosition(beforeRotation, currentShape);
-            
-            assertTrue("Shape should change after rotation", changed);
-        } else {
-            // If rotation failed (e.g., due to boundary constraints), 
-            // just verify the shape didn't change
-            assertEquals(initialRotationState, currentShape.getRotationState());
-            assertTrue(areBlocksInSamePosition(beforeRotation, currentShape));
-        }
-    }
-    
-    // Helper method to check if blocks are in the same position
-    private boolean areBlocksInSamePosition(Shape shape1, Shape shape2) {
-        if (shape1.getBlocks().size() != shape2.getBlocks().size()) {
-            return false;
-        }
-        
-        for (int i = 0; i < shape1.getBlocks().size(); i++) {
-            Block block1 = shape1.getBlocks().get(i);
-            Block block2 = shape2.getBlocks().get(i);
-            
-            if (block1.getX() != block2.getX() || block1.getY() != block2.getY()) {
-                return false;
+        // Check that the blocks have changed position
+        boolean hasChanged = false;
+        for (int i = 0; i < initialBlocks.length; i++) {
+            if (initialBlocks[i].getX() != rotatedBlocks[i].getX() || 
+                initialBlocks[i].getY() != rotatedBlocks[i].getY()) {
+                hasChanged = true;
+                break;
             }
         }
         
-        return true;
+        assertTrue("Shape should change when rotated", hasChanged);
     }
     
     @Test
     public void testIsValidPosition() {
         Board board = new Board(10, 20);
-        Shape currentShape = board.getCurrentShape();
         
-        // Current position should be valid
-        assertTrue(board.isValidPosition(currentShape));
+        // Create a shape
+        Shape shape = Shape.createRandomShape();
         
-        // Create a copy and move it far to the right (out of bounds)
-        Shape outOfBoundsShape = currentShape.getCopy();
-        outOfBoundsShape.move(board.getWidth(), 0);
+        // Position it in a valid location
+        shape.setPosition(5, 5);
         
-        // Position should be invalid
-        assertFalse(board.isValidPosition(outOfBoundsShape));
+        // Check that the position is valid
+        assertTrue(board.isValidPosition(shape));
+        
+        // Position it partially outside the board
+        shape.setPosition(-1, 5);
+        
+        // Check that the position is invalid
+        assertFalse(board.isValidPosition(shape));
+        
+        // Position it at the bottom of the board
+        shape.setPosition(5, 20 - shape.getHeight());
+        
+        // Check that the position is valid
+        assertTrue(board.isValidPosition(shape));
+        
+        // Position it below the bottom of the board
+        shape.setPosition(5, 20 - shape.getHeight() + 1);
+        
+        // Check that the position is invalid
+        assertFalse(board.isValidPosition(shape));
     }
 }

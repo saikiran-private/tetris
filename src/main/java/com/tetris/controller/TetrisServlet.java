@@ -1,6 +1,8 @@
 package com.tetris.controller;
 
 import com.tetris.model.Game;
+import com.tetris.model.Shape;
+import com.tetris.model.Block;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/tetris")
 public class TetrisServlet extends HttpServlet {
@@ -18,6 +22,33 @@ public class TetrisServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String GAME_ATTRIBUTE = "tetrisGame";
     private final Gson gson = new Gson();
+    
+    // Method to get game state including next shape
+    private Map<String, Object> getGameState(Game game) {
+        Map<String, Object> gameState = new HashMap<>();
+        
+        // Add basic game state
+        gameState.put("grid", game.getBoard().getGrid());
+        gameState.put("score", game.getBoard().getScore());
+        gameState.put("level", game.getLevel());
+        gameState.put("gameOver", game.isGameOver());
+        
+        // Add the next shape if available
+        Shape nextShape = game.getNextShape();
+        if (nextShape != null) {
+            List<Map<String, Object>> nextShapeBlocks = new ArrayList<>();
+            for (Block block : nextShape.getBlocks()) {
+                Map<String, Object> blockData = new HashMap<>();
+                blockData.put("x", block.getX());
+                blockData.put("y", block.getY());
+                blockData.put("color", block.getColor());
+                nextShapeBlocks.add(blockData);
+            }
+            gameState.put("nextShape", nextShapeBlocks);
+        }
+        
+        return gameState;
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -42,32 +73,33 @@ public class TetrisServlet extends HttpServlet {
         
         // Handle AJAX requests
         response.setContentType("application/json");
-        Map<String, Object> responseData = new HashMap<>();
+        Map<String, Object> responseData;
         
         switch (action) {
             case "getState":
-                responseData.put("grid", game.getBoard().getGrid());
-                responseData.put("score", game.getBoard().getScore());
-                responseData.put("level", game.getLevel());
-                responseData.put("gameOver", game.getBoard().isGameOver());
+                responseData = getGameState(game);
                 break;
                 
             case "newGame":
                 game.restart();
+                responseData = new HashMap<>();
                 responseData.put("success", true);
                 break;
                 
             case "pause":
                 game.pause();
+                responseData = new HashMap<>();
                 responseData.put("success", true);
                 break;
                 
             case "resume":
                 game.resume();
+                responseData = new HashMap<>();
                 responseData.put("success", true);
                 break;
                 
             default:
+                responseData = new HashMap<>();
                 responseData.put("error", "Unknown action");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }

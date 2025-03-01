@@ -31,9 +31,6 @@ public class Board {
                 grid[row][col] = 0;
             }
         }
-        
-        // Create the first shape
-        createNewShape();
     }
     
     public void createNewShape() {
@@ -42,17 +39,15 @@ public class Board {
             currentShape = nextShape;
         } else {
             // Create a random shape for the first time
-            int shapeType = (int) (Math.random() * 7);
-            currentShape = new Shape(shapeType);
+            currentShape = Shape.createRandomShape();
         }
         
         // Create a new random shape as the next shape
-        int shapeType = (int) (Math.random() * 7);
-        nextShape = new Shape(shapeType);
+        nextShape = Shape.createRandomShape();
         
         // Position the current shape at the top center of the board
         int startX = (width / 2) - 1;
-        currentShape.move(startX, 0);
+        currentShape.setPosition(startX, 0);
         
         // Check if the new shape can be placed
         if (!isValidPosition(currentShape)) {
@@ -61,6 +56,8 @@ public class Board {
     }
     
     public boolean moveShapeDown() {
+        if (currentShape == null) return false;
+        
         Shape movedShape = currentShape.getCopy();
         movedShape.move(0, 1);
         
@@ -81,6 +78,8 @@ public class Board {
     }
     
     public boolean moveShapeLeft() {
+        if (currentShape == null) return false;
+        
         Shape movedShape = currentShape.getCopy();
         movedShape.move(-1, 0);
         
@@ -92,6 +91,8 @@ public class Board {
     }
     
     public boolean moveShapeRight() {
+        if (currentShape == null) return false;
+        
         Shape movedShape = currentShape.getCopy();
         movedShape.move(1, 0);
         
@@ -103,6 +104,8 @@ public class Board {
     }
     
     public boolean rotateShape() {
+        if (currentShape == null) return false;
+        
         Shape rotatedShape = currentShape.getCopy();
         rotatedShape.rotate();
         
@@ -114,6 +117,8 @@ public class Board {
     }
     
     public boolean isValidPosition(Shape shape) {
+        if (shape == null) return false;
+        
         for (Block block : shape.getBlocks()) {
             int x = block.getX();
             int y = block.getY();
@@ -132,6 +137,8 @@ public class Board {
     }
     
     private void placeShape() {
+        if (currentShape == null) return;
+        
         for (Block block : currentShape.getBlocks()) {
             int x = block.getX();
             int y = block.getY();
@@ -225,6 +232,11 @@ public class Board {
         }
         
         return displayGrid;
+    }
+    
+    // Add method to set the current shape
+    public void setCurrentShape(Shape shape) {
+        this.currentShape = shape;
     }
     
     public Shape getCurrentShape() {

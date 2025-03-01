@@ -1,17 +1,13 @@
 package com.tetris.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Represents a Tetris piece composed of multiple blocks
+ * Represents a Tetris shape (tetromino)
  */
 public class Shape {
-    private List<Block> blocks;
+    private Block[] blocks;
     private int shapeType;
-    private int rotationState;
     
-    // Constants for shape types
+    // Shape types
     public static final int I_SHAPE = 0;
     public static final int J_SHAPE = 1;
     public static final int L_SHAPE = 2;
@@ -20,8 +16,8 @@ public class Shape {
     public static final int T_SHAPE = 5;
     public static final int Z_SHAPE = 6;
     
-    // Colors for different shapes
-    public static final int[] COLORS = {
+    // Colors for each shape type
+    private static final int[] COLORS = {
         0x00FFFF, // Cyan (I)
         0x0000FF, // Blue (J)
         0xFFA500, // Orange (L)
@@ -30,70 +26,74 @@ public class Shape {
         0x800080, // Purple (T)
         0xFF0000  // Red (Z)
     };
-
+    
     public Shape(int shapeType) {
         this.shapeType = shapeType;
-        this.rotationState = 0;
-        this.blocks = new ArrayList<>();
-        initializeShape();
+        this.blocks = createBlocks(shapeType);
     }
     
-    private void initializeShape() {
-        // Clear existing blocks
-        blocks.clear();
+    private Block[] createBlocks(int shapeType) {
+        Block[] blocks = new Block[4]; // All tetrominoes have 4 blocks
         
-        // Create blocks based on shape type
         switch (shapeType) {
             case I_SHAPE:
                 // I shape (horizontal)
-                blocks.add(new Block(0, 0, COLORS[I_SHAPE]));
-                blocks.add(new Block(1, 0, COLORS[I_SHAPE]));
-                blocks.add(new Block(2, 0, COLORS[I_SHAPE]));
-                blocks.add(new Block(3, 0, COLORS[I_SHAPE]));
+                blocks[0] = new Block(0, 0, COLORS[I_SHAPE]);
+                blocks[1] = new Block(1, 0, COLORS[I_SHAPE]);
+                blocks[2] = new Block(2, 0, COLORS[I_SHAPE]);
+                blocks[3] = new Block(3, 0, COLORS[I_SHAPE]);
                 break;
             case J_SHAPE:
                 // J shape
-                blocks.add(new Block(0, 0, COLORS[J_SHAPE]));
-                blocks.add(new Block(0, 1, COLORS[J_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[J_SHAPE]));
-                blocks.add(new Block(2, 1, COLORS[J_SHAPE]));
+                blocks[0] = new Block(0, 0, COLORS[J_SHAPE]);
+                blocks[1] = new Block(0, 1, COLORS[J_SHAPE]);
+                blocks[2] = new Block(1, 1, COLORS[J_SHAPE]);
+                blocks[3] = new Block(2, 1, COLORS[J_SHAPE]);
                 break;
             case L_SHAPE:
                 // L shape
-                blocks.add(new Block(2, 0, COLORS[L_SHAPE]));
-                blocks.add(new Block(0, 1, COLORS[L_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[L_SHAPE]));
-                blocks.add(new Block(2, 1, COLORS[L_SHAPE]));
+                blocks[0] = new Block(2, 0, COLORS[L_SHAPE]);
+                blocks[1] = new Block(0, 1, COLORS[L_SHAPE]);
+                blocks[2] = new Block(1, 1, COLORS[L_SHAPE]);
+                blocks[3] = new Block(2, 1, COLORS[L_SHAPE]);
                 break;
             case O_SHAPE:
                 // O shape (square)
-                blocks.add(new Block(0, 0, COLORS[O_SHAPE]));
-                blocks.add(new Block(1, 0, COLORS[O_SHAPE]));
-                blocks.add(new Block(0, 1, COLORS[O_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[O_SHAPE]));
+                blocks[0] = new Block(0, 0, COLORS[O_SHAPE]);
+                blocks[1] = new Block(1, 0, COLORS[O_SHAPE]);
+                blocks[2] = new Block(0, 1, COLORS[O_SHAPE]);
+                blocks[3] = new Block(1, 1, COLORS[O_SHAPE]);
                 break;
             case S_SHAPE:
                 // S shape
-                blocks.add(new Block(1, 0, COLORS[S_SHAPE]));
-                blocks.add(new Block(2, 0, COLORS[S_SHAPE]));
-                blocks.add(new Block(0, 1, COLORS[S_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[S_SHAPE]));
+                blocks[0] = new Block(1, 0, COLORS[S_SHAPE]);
+                blocks[1] = new Block(2, 0, COLORS[S_SHAPE]);
+                blocks[2] = new Block(0, 1, COLORS[S_SHAPE]);
+                blocks[3] = new Block(1, 1, COLORS[S_SHAPE]);
                 break;
             case T_SHAPE:
                 // T shape
-                blocks.add(new Block(1, 0, COLORS[T_SHAPE]));
-                blocks.add(new Block(0, 1, COLORS[T_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[T_SHAPE]));
-                blocks.add(new Block(2, 1, COLORS[T_SHAPE]));
+                blocks[0] = new Block(1, 0, COLORS[T_SHAPE]);
+                blocks[1] = new Block(0, 1, COLORS[T_SHAPE]);
+                blocks[2] = new Block(1, 1, COLORS[T_SHAPE]);
+                blocks[3] = new Block(2, 1, COLORS[T_SHAPE]);
                 break;
             case Z_SHAPE:
                 // Z shape
-                blocks.add(new Block(0, 0, COLORS[Z_SHAPE]));
-                blocks.add(new Block(1, 0, COLORS[Z_SHAPE]));
-                blocks.add(new Block(1, 1, COLORS[Z_SHAPE]));
-                blocks.add(new Block(2, 1, COLORS[Z_SHAPE]));
+                blocks[0] = new Block(0, 0, COLORS[Z_SHAPE]);
+                blocks[1] = new Block(1, 0, COLORS[Z_SHAPE]);
+                blocks[2] = new Block(1, 1, COLORS[Z_SHAPE]);
+                blocks[3] = new Block(2, 1, COLORS[Z_SHAPE]);
                 break;
+            default:
+                // Default to I shape
+                blocks[0] = new Block(0, 0, COLORS[I_SHAPE]);
+                blocks[1] = new Block(1, 0, COLORS[I_SHAPE]);
+                blocks[2] = new Block(2, 0, COLORS[I_SHAPE]);
+                blocks[3] = new Block(3, 0, COLORS[I_SHAPE]);
         }
+        
+        return blocks;
     }
     
     public void rotate() {
@@ -102,30 +102,18 @@ public class Shape {
             return;
         }
         
-        // Find center of rotation (usually the second block for most shapes)
-        Block center = blocks.get(1);
-        int centerX = center.getX();
-        int centerY = center.getY();
+        // Find the center of rotation (usually the second block for most shapes)
+        int centerX = blocks[1].getX();
+        int centerY = blocks[1].getY();
         
         // Rotate each block around the center
         for (Block block : blocks) {
-            if (block != center) {
-                // Translate to origin
-                int x = block.getX() - centerX;
-                int y = block.getY() - centerY;
-                
-                // Rotate 90 degrees clockwise: (x,y) -> (y,-x)
-                int newX = y;
-                int newY = -x;
-                
-                // Translate back
-                block.setX(newX + centerX);
-                block.setY(newY + centerY);
-            }
+            int x = block.getX() - centerX;
+            int y = block.getY() - centerY;
+            
+            // Rotate 90 degrees clockwise: (x, y) -> (-y, x)
+            block.setPosition(centerX - y, centerY + x);
         }
-        
-        // Update rotation state
-        rotationState = (rotationState + 1) % 4;
     }
     
     public void move(int deltaX, int deltaY) {
@@ -134,25 +122,69 @@ public class Shape {
         }
     }
     
-    public List<Block> getBlocks() {
-        return new ArrayList<>(blocks);
+    public void setPosition(int x, int y) {
+        // Calculate the current top-left position
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        
+        for (Block block : blocks) {
+            minX = Math.min(minX, block.getX());
+            minY = Math.min(minY, block.getY());
+        }
+        
+        // Calculate the offset to move to the new position
+        int deltaX = x - minX;
+        int deltaY = y - minY;
+        
+        // Move all blocks by the offset
+        move(deltaX, deltaY);
+    }
+    
+    public Shape getCopy() {
+        Shape copy = new Shape(shapeType);
+        
+        for (int i = 0; i < blocks.length; i++) {
+            copy.blocks[i].setPosition(blocks[i].getX(), blocks[i].getY());
+        }
+        
+        return copy;
+    }
+    
+    public Block[] getBlocks() {
+        return blocks;
     }
     
     public int getShapeType() {
         return shapeType;
     }
     
-    public int getRotationState() {
-        return rotationState;
+    public int getWidth() {
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        
+        for (Block block : blocks) {
+            minX = Math.min(minX, block.getX());
+            maxX = Math.max(maxX, block.getX());
+        }
+        
+        return maxX - minX + 1;
     }
     
-    public Shape getCopy() {
-        Shape copy = new Shape(this.shapeType);
-        copy.blocks.clear();
-        for (Block block : this.blocks) {
-            copy.blocks.add(new Block(block));
+    public int getHeight() {
+        int minY = Integer.MAX_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        
+        for (Block block : blocks) {
+            minY = Math.min(minY, block.getY());
+            maxY = Math.max(maxY, block.getY());
         }
-        copy.rotationState = this.rotationState;
-        return copy;
+        
+        return maxY - minY + 1;
+    }
+    
+    // Static method to create a random shape
+    public static Shape createRandomShape() {
+        int shapeType = (int) (Math.random() * 7); // 7 different shapes
+        return new Shape(shapeType);
     }
 }

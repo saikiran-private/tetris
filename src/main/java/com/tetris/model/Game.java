@@ -13,6 +13,9 @@ public class Game {
     private int level;
     private int linesCleared;
     private GameListener gameListener;
+    private Shape nextShape;
+    private Shape currentShape;  // Add this field
+    private boolean gameOver;    // Add this field
     
     // Interface for game event listeners
     public interface GameListener {
@@ -27,6 +30,11 @@ public class Game {
         this.isPaused = false;
         this.level = 1;
         this.linesCleared = 0;
+        this.gameOver = false;   // Initialize gameOver
+        
+        // Initialize shapes
+        this.nextShape = Shape.createRandomShape();
+        createNewShape();
     }
     
     public void setGameListener(GameListener listener) {
@@ -119,6 +127,11 @@ public class Game {
         isPaused = false;
         level = 1;
         linesCleared = 0;
+        gameOver = false;
+        
+        // Initialize shapes
+        this.nextShape = Shape.createRandomShape();
+        createNewShape();
         
         if (gameTimer != null) {
             gameTimer.cancel();
@@ -154,6 +167,36 @@ public class Game {
         }
     }
     
+    // Modify the method that creates a new shape
+    private void createNewShape() {
+        // Move the next shape to be the current shape
+        currentShape = nextShape;
+        
+        // Create a new next shape
+        nextShape = Shape.createRandomShape();
+        
+        // Position the current shape at the top center of the board
+        currentShape.setPosition(board.getWidth() / 2 - currentShape.getWidth() / 2, 0);
+        
+        // Set the current shape on the board
+        board.setCurrentShape(currentShape);
+        
+        // Check if game is over
+        if (!board.isValidPosition(currentShape)) {
+            gameOver = true;
+        }
+    }
+
+    // Add a getter for the next shape
+    public Shape getNextShape() {
+        return nextShape;
+    }
+    
+    // Add a getter for the current shape
+    public Shape getCurrentShape() {
+        return currentShape;
+    }
+
     public Board getBoard() {
         return board;
     }
@@ -164,6 +207,10 @@ public class Game {
     
     public int getLevel() {
         return level;
+    }
+    
+    public boolean isGameOver() {
+        return gameOver || board.isGameOver();
     }
     
     public void shutdown() {
