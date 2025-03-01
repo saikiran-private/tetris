@@ -1,9 +1,0 @@
-com/tetris/model/Game$GameListener.class
-com/tetris/model/Game$1.class
-com/tetris/model/Board.class
-com/tetris/controller/TetrisServlet.class
-com/tetris/model/Game.class
-com/tetris/util/GameDemo.class
-com/tetris/model/Block.class
-com/tetris/model/Shape.class
-com/tetris/util/GameDemo$1.class
