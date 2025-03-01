@@ -10,15 +10,6 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
     
-    <servlet>
-        <servlet-name>TetrisServlet</servlet-name>
-        <servlet-class>com.tetris.controller.TetrisServlet</servlet-class>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>TetrisServlet</servlet-name>
-        <url-pattern>/tetris</url-pattern>
-    </servlet-mapping>
     
     <session-config>
         <session-timeout>30</session-timeout>
