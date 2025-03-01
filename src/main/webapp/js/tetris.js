@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const gameOverOverlay = document.getElementById('game-over-overlay');
     const finalScoreElement = document.getElementById('final-score');
     const restartBtn = document.getElementById('restart-btn');
+    const nextPieceContainer = document.getElementById('next-piece');
     
     // Game state
     let isPaused = false;
@@ -75,6 +76,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Update the next piece display
+    function updateNextPiece(nextShape) {
+        // Clear the next piece container
+        nextPieceContainer.innerHTML = '';
+        
+        if (!nextShape || nextShape.length === 0) return;
+        
+        // Find the dimensions of the next shape
+        let minX = Number.MAX_VALUE;
+        let maxX = Number.MIN_VALUE;
+        let minY = Number.MAX_VALUE;
+        let maxY = Number.MIN_VALUE;
+        
+        nextShape.forEach(block => {
+            minX = Math.min(minX, block.x);
+            maxX = Math.max(maxX, block.x);
+            minY = Math.min(minY, block.y);
+            maxY = Math.max(maxY, block.y);
+        });
+        
+        const width = maxX - minX + 1;
+        const height = maxY - minY + 1;
+        
+        // Create a mini grid for the next piece
+        const miniGrid = document.createElement('div');
+        miniGrid.className = 'mini-grid';
+        miniGrid.style.display = 'grid';
+        miniGrid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+        miniGrid.style.gridTemplateRows = `repeat(${height}, 1fr)`;
+        miniGrid.style.gap = '2px';
+        miniGrid.style.width = '100%';
+        miniGrid.style.height = '100%';
+        
+        // Create empty cells for the mini grid
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'mini-cell';
+                cell.style.backgroundColor = '#ecf0f1';
+                miniGrid.appendChild(cell);
+            }
+        }
+        
+        // Fill in the cells for the next shape
+        nextShape.forEach(block => {
+            const x = block.x - minX;
+            const y = block.y - minY;
+            const index = y * width + x;
+            const cells = miniGrid.querySelectorAll('.mini-cell');
+            
+            if (index >= 0 && index < cells.length) {
+                const colorIndex = getColorIndex(block.color);
+                cells[index].style.backgroundColor = colors[colorIndex] || '#333';
+            }
+        });
+        
+        nextPieceContainer.appendChild(miniGrid);
+    }
+    
     // Update the game state from the server
     function updateGameState() {
         if (gameOver) return;
@@ -85,6 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateBoard(data.grid);
                 scoreElement.textContent = data.score;
                 levelElement.textContent = data.level;
+                
+                // Update the next piece if available
+                if (data.nextShape) {
+                    updateNextPiece(data.nextShape);
+                }
                 
                 if (data.gameOver && !gameOver) {
                     gameOver = true;
