@@ -92,4 +92,7 @@ public class BoardTest {
         Shape outOfBoundsShape = currentShape.getCopy();
         outOfBoundsShape.move(board.getWidth(), 0);
         
-        // Position
+        // Position should be invalid
+        assertFalse(board.isValidPosition(outOfBoundsShape));
+    }
+}
