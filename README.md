@@ -24,29 +24,29 @@ A Java web-based implementation of the classic Tetris game that can be deployed 
 ## Project Structure
 tetris/
 ├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── com/
-│ │ │ └── tetris/
-│ │ │ ├── model/ # Game logic classes
-│ │ │ ├── controller/ # Servlet controllers
-│ │ │ └── util/ # Utility classes
-│ │ ├── webapp/
-│ │ │ ├── WEB-INF/
-│ │ │ │ ├── web.xml # Web application configuration
-│ │ │ │ └── tetris.jsp # Main game JSP
-│ │ │ ├── css/
-│ │ │ │ └── tetris.css # Game styling
-│ │ │ ├── js/
-│ │ │ │ └── tetris.js # Client-side game logic
-│ │ │ └── index.html # Redirect page
-│ │ └── resources/
-│ └── test/
-│ └── java/
-│ └── com/
-│ └── tetris/ # Unit tests
-├── pom.xml # Maven configuration
-└── README.md # This file
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── tetris/
+│   │   │           ├── model/      # Game logic classes
+│   │   │           ├── controller/ # Servlet controllers
+│   │   │           └── util/       # Utility classes
+│   │   ├── webapp/
+│   │   │   ├── WEB-INF/
+│   │   │   │   ├── web.xml         # Web application configuration
+│   │   │   │   └── tetris.jsp      # Main game JSP
+│   │   │   ├── css/
+│   │   │   │   └── tetris.css      # Game styling
+│   │   │   ├── js/
+│   │   │   │   └── tetris.js       # Client-side game logic
+│   │   │   └── index.html          # Redirect page
+│   │   └── resources/
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── tetris/         # Unit tests
+├── pom.xml                         # Maven configuration
+└── README.md                       # This file
 
 
 ## Prerequisites
