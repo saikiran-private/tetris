@@ -22,6 +22,7 @@ A Java web-based implementation of the classic Tetris game that can be deployed 
 - Apache Tomcat for deployment
 
 ## Project Structure
+```
 tetris/
 ├── src/
 │   ├── main/
@@ -48,7 +49,7 @@ tetris/
 ├── pom.xml                         # Maven configuration
 └── README.md                       # This file
 
-
+```
 ## Prerequisites
 
 - Java Development Kit (JDK) 8 or higher
